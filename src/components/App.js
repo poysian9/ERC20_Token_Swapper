@@ -34,7 +34,13 @@ class App extends Component {
       this.setState({token})
       // ... And Token balance
       let tokenBalance = await token.methods.balanceOf(this.state.account).call()
-      this.setState({tokenBalance: tokenBalance.toString() })
+      if(tokenBalance>0) {
+        this.setState({ tokenBalance: tokenBalance.toString() })
+      }
+      else {
+        this.setState({ tokenBalance: "0"})
+      }
+      // console.log(this.state.tokenBalance)
     }
     else {
       window.alert('Token contract not detected on current Network!')
@@ -84,7 +90,10 @@ class App extends Component {
     if(this.state.loading) {
       content = <p id="loader" className='text-center'>Loading...</p>
     } else {
-      content = <Main />
+      content = <Main 
+        ethBalance={this.state.ethBalance}
+        tokenBalance={this.state.tokenBalance}
+      />
     }
 
     return (
@@ -92,14 +101,8 @@ class App extends Component {
         <Navbar account = {this.state.account} />
         <div className="container-fluid mt-5">
           <div className="row">
-            <main role="main" className="col-lg-12 d-flex text-center">
+            <main role="main" className="col-lg-12 ml-auto mr-auto" style={{ maxWidth: '600px' }}>
               <div className="content mr-auto ml-auto">
-                <a
-                  href="http://www.dappuniversity.com/bootcamp"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                </a>
                 {content}
               </div>
             </main>
