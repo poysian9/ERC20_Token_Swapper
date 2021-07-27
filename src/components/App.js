@@ -72,6 +72,28 @@ class App extends Component {
       }
   }
 
+  sellTokens = (tokenAmount) => {
+    this.setState({ loading: true })
+    this.state.token.methods.approve(this.state.ethSwap.address, tokenAmount)
+                            .send({ from: this.state.account  })
+                            .on('transactionHash', (hash) => {
+                              this.state.ethSwap.methods.sellTokens(tokenAmount)
+                              .send({ from: this.state.account  })
+                              .on('transactionHash', (hash) => {
+                                this.setState({ loading: false  })
+                              })
+                              
+                            })
+  }
+
+  buyTokens = (etherAmount) => {
+    this.setState({ loading: true })
+    this.state.ethSwap.methods.buyTokens()
+                              .send({ value:  etherAmount, from: this.state.account  })
+                              .on('transactionHash', (hash) => {
+                                this.setState({ loading: false  })
+                              })
+  }
   // Set default states in React before page loads
   constructor(props){
     super(props)
@@ -93,6 +115,8 @@ class App extends Component {
       content = <Main 
         ethBalance={this.state.ethBalance}
         tokenBalance={this.state.tokenBalance}
+        buyTokens={this.buyTokens}
+        sellTokens={this.sellTokens}
       />
     }
 
